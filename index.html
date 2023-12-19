@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .country-card {
+    box-sizing: border-box;
+    width: 30%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+img {
+    max-width: 80%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 0 auto 10px; /* Center the image horizontally */
+}
+
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: black;
+            color: #f2f2f2;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            font-size: x-large;
+        }
+
+        /* Overlay Styles */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Countries and Weather</h1>
+    </header>
+
+    <div class="container">
+        <div class="country-card">
+            <h2>India</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/1280px-Flag_of_India.svg.png" >
+            <p>Capital: Delhi</p>
+            <p>Region: Asia</p>
+            <p>Country Code: IN</p>
+            <button onclick="checkWeather('India')">Check Weather</button>
+        </div>
+
+        <div class="country-card">
+            <h2>Canada</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/1200px-Flag_of_Canada_%28Pantone%29.svg.png" >
+            <p>Capital: Ottawa</p>
+            <p>Region: Americas</p>
+            <p>Country Code: CA</p>
+            <button onclick="checkWeather('Canada')">Check Weather</button>
+        </div>
+
+        <div class="country-card">
+            <h2>USA</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/383px-Flag_of_the_United_States.svg.png" >
+            <p>Capital: Washigton, D.C.</p>
+            <p>Region: Americas</p>
+            <p>Country Code: US</p>
+            <button onclick="checkWeather('USA')">Check Weather</button>
+        </div>
+
+        <div class="country-card">
+            <h2>Spain</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Bandera_de_Espa%C3%B1a.svg/1280px-Bandera_de_Espa%C3%B1a.svg.png" >
+            <p>Capital: Madird</p>
+            <p>Region: Europe</p>
+            <p>Country Code: ES</p>
+            <button onclick="checkWeather('Spain')">Check Weather</button>
+        </div>
+
+        <div class="country-card">
+            <h2>Italy</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1280px-Flag_of_Italy.svg.png">
+            <p>Capital: Rome</p>
+            <p>Region: Europe</p>
+            <p>Country Code: IT</p>
+            <button onclick="checkWeather('Italy')">Check Weather</button>
+        </div>
+
+        <div class="country-card">
+            <h2>France</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/1280px-Flag_of_France.svg.png" >
+            <p>Capital: Paris</p>
+            <p>Region: Europe</p>
+            <p>Country Code: FR</p>
+            <button onclick="checkWeather('France')">Check Weather</button>
+        </div>
+
+        <!-- Repeat the above country-card div for additional countries -->
+
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <span onclick="closePopup()" style="cursor: pointer; float: right;">&times;</span>
+        <div id="popup-content"></div>
+    </div>
+
+    <script>
+        async function checkWeather(country) {
+            try {
+                const apiKey = 'd71eef0f71b244ada2b22520e2c4dd72'; // Replace with your actual API key
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${country}&appid=${apiKey}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const temperature = (data.main.temp - 273.15).toFixed(2); // Convert Kelvin to Celsius
+                    const description = data.weather[0].description;
+
+                    // Display the weather details in the centered popup with line breaks
+                    openPopup(`Weather in ${country}<br>Temperature: ${temperature}°C<br>Description: ${description}`);
+                } else {
+                    alert(`Error fetching weather data for ${country}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function openPopup(content) {
+            document.getElementById('popup-content').innerHTML = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+    
+
+</body>
+</html>
