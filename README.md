@@ -1,1 +1,1 @@
-weather using openeweathermaps.org
+weather
